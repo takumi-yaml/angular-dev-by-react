@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  db:
+    image: mysql
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci --general_log=true --general_log_file=/var/lib/mysql/general.log
+    environment:
+        MYSQL_ROOT_PASSWORD: 'thisistest'
+        MYSQL_DATABASE: 'my_app'
+        MYSQL_USER: 'admin'
+        MYSQL_PASSWORD: 'admin'
+        MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+        MYSQL_RANDOM_ROOT_PASSWORD: 'no'
+        MYSQL_ROOT_HOST: 172.19.0.1
+    ports:
+        - "3307:3306"
+    volumes:
+#        - ./_config:/etc/mysql/conf.d
+        - ./mydb:/var/lib/mysql
+  backend:
+    build:
+        context: ./backend/src
+        dockerfile: Dockerfile
+    environment:
+         - FLASK_APP=my_app
+         - FLASK_DEBUG=true
+    command: python3 ./my_app/my_app.py
+    volumes:
+      - ./backend/src:/app
+    ports:
+      - "5000:5000"
+      - "3333:3333"
+    depends_on:
+      - db
