@@ -41,3 +41,4 @@ mydb/*
 
 .python-version
 *.db
+__pycache__/
